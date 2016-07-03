@@ -24,6 +24,34 @@ public class RenderContext extends Bitmap {
 		}
 	}
 
+	public void fillTriangle(Vertex v1, Vertex v2, Vertex v3) {
+		Vertex minYVert = v1;
+		Vertex midYVert = v2;
+		Vertex maxYVert = v3;
+
+		if(maxYVert.getY() < midYVert.getY()) {
+			Vertex temp = maxYVert;
+			maxYVert = midYVert;
+			midYVert = temp;
+		}
+		if(midYVert.getY() < minYVert.getY()) {
+			Vertex temp = midYVert;
+			midYVert = minYVert;
+			minYVert = temp;
+		}
+		if(maxYVert.getY() < midYVert.getY()) {
+			Vertex temp = maxYVert;
+			maxYVert = midYVert;
+			midYVert = temp;
+		}
+
+		float area = minYVert.triangleArea(maxYVert, midYVert);
+		int handedness = area >= 0 ? 1 : 0;
+
+		scanConvertTriangle(minYVert, midYVert, maxYVert, handedness);
+		fillShape((int) minYVert.getY(), (int) maxYVert.getY());
+	}
+
 	public void scanConvertTriangle(Vertex minYVert, Vertex midYVert, Vertex maxYVert, int handedness) {
 		scanConvertLine(minYVert, maxYVert, handedness);
 		scanConvertLine(minYVert, midYVert, 1 - handedness);

@@ -9,6 +9,15 @@ public class Vertex {
 		this.y = y;
 	}
 
+	public float triangleArea(Vertex b, Vertex c) {
+		float x1 = b.getX() - x;
+		float y1 = b.getY() - y;
+		float x2 = c.getX() - x;
+		float y2 = c.getY() - y;
+
+		return (x1 * y2 - x2 * y1);
+	}
+
 	public float getX() {
 		return x;
 	}

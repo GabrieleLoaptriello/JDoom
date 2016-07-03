@@ -11,9 +11,9 @@ public class Main {
 		RenderContext target = display.getFrameBuffer();
 		Stars3D stars = new Stars3D(4096, 64.0f, 10.0f);
 
-		Vertex minYVert = new Vertex(100, 100);
-		Vertex midYVert = new Vertex(150, 200);
-		Vertex maxYVert = new Vertex(80, 300);
+		Vertex v1 = new Vertex(100, 100);
+		Vertex v2 = new Vertex(0, 200);
+		Vertex v3 = new Vertex(80, 300);
 
 		long previousTime = System.nanoTime();
 		while(true) {
@@ -27,8 +27,7 @@ public class Main {
 //			for (int j = 100; j < 200; j++) {
 //				target.drawScanBuffer(j, 300 - j, 300 + j);
 //			}
-			target.scanConvertTriangle(minYVert, midYVert, maxYVert, 0);
-			target.fillShape(100, 300);
+			target.fillTriangle(v1, v2, v3);
 
 			display.swapBuffers();
 		}
