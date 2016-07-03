@@ -24,12 +24,6 @@ public class Display extends Canvas {
 		displayImage = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
 		displayComponents = ((DataBufferByte) displayImage.getRaster().getDataBuffer()).getData();
 
-		frameBuffer.clear((byte) 0x80);
-		frameBuffer.drawPixel(100, 100, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xff);
-		frameBuffer.drawPixel(101, 100, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xff);
-		frameBuffer.drawPixel(100, 101, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xff);
-		frameBuffer.drawPixel(101, 101, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xff);
-
 		frame = new JFrame();
 		frame.add(this);
 		frame.pack();
@@ -48,5 +42,9 @@ public class Display extends Canvas {
 		frameBuffer.copyToByteArray(displayComponents);
 		graphics.drawImage(displayImage, 0, 0, frameBuffer.getWidth(), frameBuffer.getHeight(), null);
 		bufferStrategy.show();
+	}
+
+	public Bitmap getFrameBuffer() {
+		return frameBuffer;
 	}
 }
