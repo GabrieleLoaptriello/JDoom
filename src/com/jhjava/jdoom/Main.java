@@ -4,7 +4,7 @@ public class Main {
 	public static void main(String[] args) {
 		Display display = new Display(800, 600, "JDoom");
 		Bitmap target = display.getFrameBuffer();
-		Stars3D stars = new Stars3D(4096, 64.0f, 20.0f);
+		Stars3D stars = new Stars3D(4096, 64.0f, 10.0f);
 
 		long previousTime = System.nanoTime();
 		while(true) {

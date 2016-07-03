@@ -28,6 +28,8 @@ public class Stars3D {
 	}
 
 	public void updateAndRender(Bitmap target, float delta) {
+		final float tanHalfFOV = (float) Math.tan(Math.toRadians(70.0 / 2.0));
+
 		target.clear((byte) 0x00);
 
 		float halfWidth = target.getWidth() / 2.0f;
@@ -40,8 +42,8 @@ public class Stars3D {
 				initStar(i);
 			}
 
-			int x = (int) ((starX[i] / starZ[i]) * halfWidth + halfWidth);
-			int y = (int) ((starY[i] / starZ[i]) * halfHeight + halfHeight);
+			int x = (int) ((starX[i] / (starZ[i] * tanHalfFOV)) * halfWidth + halfWidth);
+			int y = (int) ((starY[i] / (starZ[i] * tanHalfFOV)) * halfHeight + halfHeight);
 
 			if(x < 0 || x >= target.getWidth() || y < 0 || y >= target.getHeight()) {
 				initStar(i);
