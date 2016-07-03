@@ -1,4 +1,4 @@
-package com.jhjava.jdoom;
+package com.jhjava.jdoom.engine;
 
 import java.util.Arrays;
 

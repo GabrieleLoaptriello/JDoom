@@ -1,4 +1,4 @@
-package com.jhjava.jdoom;
+package com.jhjava.jdoom.engine;
 
 import javax.swing.*;
 import java.awt.*;
@@ -8,7 +8,7 @@ import java.awt.image.DataBufferByte;
 
 public class Display extends Canvas {
 	private final JFrame frame;
-	private final Bitmap frameBuffer;
+	private final RenderContext frameBuffer;
 	private final BufferedImage displayImage;
 	private final byte[] displayComponents;
 	private final BufferStrategy bufferStrategy;
@@ -20,7 +20,7 @@ public class Display extends Canvas {
 		setMinimumSize(size);
 		setMaximumSize(size);
 
-		frameBuffer = new Bitmap(width, height);
+		frameBuffer = new RenderContext(width, height);
 		displayImage = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
 		displayComponents = ((DataBufferByte) displayImage.getRaster().getDataBuffer()).getData();
 
@@ -44,7 +44,7 @@ public class Display extends Canvas {
 		bufferStrategy.show();
 	}
 
-	public Bitmap getFrameBuffer() {
+	public RenderContext getFrameBuffer() {
 		return frameBuffer;
 	}
 }

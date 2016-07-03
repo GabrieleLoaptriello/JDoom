@@ -1,5 +1,7 @@
 package com.jhjava.jdoom;
 
+import com.jhjava.jdoom.engine.Bitmap;
+
 public class Stars3D {
 	private final float spread;
 	private final float speed;
