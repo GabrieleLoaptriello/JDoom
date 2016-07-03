@@ -25,6 +25,10 @@ public class Display extends Canvas {
 		displayComponents = ((DataBufferByte) displayImage.getRaster().getDataBuffer()).getData();
 
 		frameBuffer.clear((byte) 0x80);
+		frameBuffer.drawPixel(100, 100, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xff);
+		frameBuffer.drawPixel(101, 100, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xff);
+		frameBuffer.drawPixel(100, 101, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xff);
+		frameBuffer.drawPixel(101, 101, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xff);
 
 		frame = new JFrame();
 		frame.add(this);
