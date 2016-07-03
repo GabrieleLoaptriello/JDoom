@@ -1,33 +1,15 @@
 package com.jhjava.jdoom.engine;
 
 public class RenderContext extends Bitmap {
-	private final int[] scanBuffer;
-
 	public RenderContext(int width, int height) {
 		super(width, height);
-		scanBuffer= new int[height * 2];
-	}
-
-	public void drawScanBuffer(int yCoord, int xMin, int xMax) {
-		scanBuffer[yCoord * 2] = xMin;
-		scanBuffer[yCoord * 2 + 1] = xMax;
-	}
-
-	public void fillShape(int yMin, int yMax) {
-		for (int j = yMin; j < yMax; j++) {
-			int xMin = scanBuffer[j * 2];
-			int xMax = scanBuffer[j * 2 + 1];
-
-			for (int i = xMin; i < xMax; i++) {
-				drawPixel(i, j, (byte)0xff, (byte)0xff, (byte)0xff, (byte)0xff);
-			}
-		}
 	}
 
 	public void fillTriangle(Vertex v1, Vertex v2, Vertex v3) {
-		Vertex minYVert = v1;
-		Vertex midYVert = v2;
-		Vertex maxYVert = v3;
+		Matrix4f screenSpaceTransform = new Matrix4f().initScreenSpaceTransform(getWidth() / 2, getHeight() / 2);
+		Vertex minYVert = v1.transform(screenSpaceTransform).perspectiveDivide();
+		Vertex midYVert = v2.transform(screenSpaceTransform).perspectiveDivide();
+		Vertex maxYVert = v3.transform(screenSpaceTransform).perspectiveDivide();
 
 		if(maxYVert.getY() < midYVert.getY()) {
 			Vertex temp = maxYVert;
@@ -45,38 +27,42 @@ public class RenderContext extends Bitmap {
 			midYVert = temp;
 		}
 
-		float area = minYVert.triangleArea(maxYVert, midYVert);
-		int handedness = area >= 0 ? 1 : 0;
-
-		scanConvertTriangle(minYVert, midYVert, maxYVert, handedness);
-		fillShape((int) minYVert.getY(), (int) maxYVert.getY());
+		scanTriangle(minYVert, midYVert, maxYVert, minYVert.triangleAreaTimesTwo(maxYVert, midYVert) >= 0);
 	}
 
-	public void scanConvertTriangle(Vertex minYVert, Vertex midYVert, Vertex maxYVert, int handedness) {
-		scanConvertLine(minYVert, maxYVert, handedness);
-		scanConvertLine(minYVert, midYVert, 1 - handedness);
-		scanConvertLine(midYVert, maxYVert, 1 - handedness);
+	public void scanTriangle(Vertex minYVert, Vertex midYVert, Vertex maxYVert, boolean handedness) {
+		Edge topToBottom = new Edge(minYVert, maxYVert);
+		Edge topToMiddle = new Edge(minYVert, midYVert);
+		Edge middleToBottom = new Edge(midYVert, maxYVert);
+
+		scanEdges(topToBottom, topToMiddle, handedness);
+		scanEdges(topToBottom, middleToBottom, handedness);
 	}
 
-	private void scanConvertLine(Vertex minYVert, Vertex maxYVert, int whichSide) {
-		int yStart = (int) minYVert.getY();
-		int yEnd = (int) maxYVert.getY();
-		int xStart = (int) minYVert.getX();
-		int xEnd = (int) maxYVert.getX();
-
-		int yDist = yEnd - yStart;
-		int xDist = xEnd - xStart;
-
-		if(yDist <= 0) {
-			return;
+	private void scanEdges(Edge a, Edge b, boolean handedness) {
+		Edge left = a;
+		Edge right = b;
+		if(handedness) {
+			Edge temp = left;
+			left = right;
+			right = temp;
 		}
 
-		float xStep = (float) xDist / (float) yDist;
-		float curX = (float) xStart;
+		int yStart = b.getYStart();
+		int yEnd = b.getYEnd();
+		for (int j = yStart; j < yEnd; j++) {
+			drawScanLine(left, right, j);
+			left.step();
+			right.step();
+		}
+	}
 
-		for(int j = yStart; j < yEnd; j++) {
-			scanBuffer[j * 2 + whichSide] = (int) curX;
-			curX += xStep;
+	private void drawScanLine(Edge left, Edge right, int j) {
+		int xMin = (int) Math.ceil(left.getX());
+		int xMax = (int) Math.ceil(right.getX());
+
+		for (int i = xMin; i < xMax; i++) {
+			drawPixel(i, j, (byte)0xff, (byte)0xff, (byte)0xff, (byte)0xff);
 		}
 	}
 }
