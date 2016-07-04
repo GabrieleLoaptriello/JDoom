@@ -26,6 +26,11 @@ public class Vertex {
 		return (x1 * y2 - x2 * y1);
 	}
 
+	public Vertex lerp(Vertex other, float lerpAmt) {
+		return new Vertex(pos.lerp(other.getPos(), lerpAmt),
+				texCoords.lerp(other.getTexCoords(), lerpAmt));
+	}
+
 	public float getX() {
 		return pos.getX();
 	}
@@ -40,5 +45,21 @@ public class Vertex {
 
 	public Vector4f getTexCoords() {
 		return texCoords;
+	}
+
+	public float get(int i) {
+		switch (i) {
+			case 0:
+				return pos.getX();
+			case 1:
+				return pos.getY();
+			case 2:
+				return pos.getZ();
+			case 3:
+				return pos.getW();
+			default:
+				System.err.println("WARNING: Index for method get in Vertex is out of bounds");
+				return 0;
+		}
 	}
 }

@@ -8,7 +8,7 @@ public class Main {
 		RenderContext target = display.getFrameBuffer();
 
 		Bitmap texture = new Bitmap("test.png");
-		Mesh mesh = new Mesh("cube.obj");
+		Mesh mesh = new Mesh("monkey.obj");
 
 		Matrix4f projection = new Matrix4f().initPerspective((float) Math.toRadians(70.0f), (float) target.getWidth() / (float) target.getHeight(), 0.1f, 1000.0f);
 
@@ -21,10 +21,11 @@ public class Main {
 			previousTime = currentTime;
 
 			target.clear((byte) 0x00);
+			target.clearDepthBuffer();
 
-			rot += 50 * delta;
-			Matrix4f translation = new Matrix4f().initTranslation(0.0f, 0.0f, 3.0f);
-			Matrix4f rotation = new Matrix4f().initRotation(rot, rot, rot);
+			rot += delta;
+			Matrix4f translation = new Matrix4f().initTranslation(0.0f, 0.0f, 5.0f - rot);
+			Matrix4f rotation = new Matrix4f().initRotation((float) Math.toDegrees(rot), 0.0f, (float) Math.toDegrees(rot));
 			Matrix4f transform = projection.mul(translation.mul(rotation));
 
 			target.drawMesh(mesh, transform, texture);

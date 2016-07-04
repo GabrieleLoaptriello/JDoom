@@ -1,8 +1,46 @@
 package com.jhjava.jdoom.engine;
 
+import java.util.ArrayList;
+
 public class RenderContext extends Bitmap {
+	private float[] depthBuffer;
+
 	public RenderContext(int width, int height) {
 		super(width, height);
+		depthBuffer = new float[width * height];
+	}
+
+	public void clearDepthBuffer() {
+		for (int i = 0; i < depthBuffer.length; i++) {
+			depthBuffer[i] = Float.MAX_VALUE;
+		}
+	}
+
+	private void clipPolygonComponent(ArrayList<Vertex> vertices, int componentIndex, float componentFactor, ArrayList<Vertex> result) {
+		Vertex previousVertex = vertices.get(vertices.size() - 1);
+		float previousComponent = previousVertex.get(componentIndex) * componentFactor;
+		boolean previousInside = previousComponent <= previousVertex.getPos().getW();
+
+		for (Vertex currentVertex : vertices) {
+			float currentComponent = currentVertex.get(componentIndex) * componentFactor;
+			boolean currentInside = currentComponent <= currentVertex.getPos().getW();
+
+			if(currentInside ^ previousInside) {
+				float lerpAmt = (previousVertex.getPos().getW() - previousComponent) /
+						((previousVertex.getPos().getW() - previousComponent) -
+						(currentVertex.getPos().getW() - currentComponent));
+
+				result.add(previousVertex.lerp(currentVertex, lerpAmt));
+			}
+
+			if(currentInside) {
+				result.add(currentVertex);
+			}
+
+			previousVertex = currentVertex;
+			previousComponent = currentComponent;
+			previousInside = currentInside;
+		}
 	}
 
 	public void drawMesh(Mesh mesh, Matrix4f transform, Bitmap texture) {
@@ -50,11 +88,11 @@ public class RenderContext extends Bitmap {
 		Edge topToMiddle = new Edge(gradients, minYVert, midYVert, 0);
 		Edge middleToBottom = new Edge(gradients, midYVert, maxYVert, 1);
 
-		scanEdges(gradients, topToBottom, topToMiddle, handedness, texture);
-		scanEdges(gradients, topToBottom, middleToBottom, handedness, texture);
+		scanEdges(topToBottom, topToMiddle, handedness, texture);
+		scanEdges(topToBottom, middleToBottom, handedness, texture);
 	}
 
-	private void scanEdges(Gradients gradients, Edge a, Edge b, boolean handedness, Bitmap texture) {
+	private void scanEdges(Edge a, Edge b, boolean handedness, Bitmap texture) {
 		Edge left = a;
 		Edge right = b;
 		if(handedness) {
@@ -66,36 +104,44 @@ public class RenderContext extends Bitmap {
 		int yStart = b.getYStart();
 		int yEnd = b.getYEnd();
 		for (int j = yStart; j < yEnd; j++) {
-			drawScanLine(gradients, left, right, j, texture);
+			drawScanLine(left, right, j, texture);
 			left.step();
 			right.step();
 		}
 	}
 
-	private void drawScanLine(Gradients gradients, Edge left, Edge right, int j, Bitmap texture) {
+	private void drawScanLine(Edge left, Edge right, int j, Bitmap texture) {
 		int xMin = (int) Math.ceil(left.getX());
 		int xMax = (int) Math.ceil(right.getX());
 		float xPrestep = xMin - left.getX();
 
 		float xDist = right.getX() - left.getX();
+
 		float texCoordXXStep = (right.getTexCoordX() - left.getTexCoordX()) / xDist;
 		float texCoordYXStep = (right.getTexCoordY() - left.getTexCoordY()) / xDist;
 		float oneOverZXStep = (right.getOneOverZ() - left.getOneOverZ()) / xDist;
+		float depthXStep = (right.getDepth() - left.getDepth()) / xDist;
 
 		float texCoordX = left.getTexCoordX() + texCoordXXStep * xPrestep;
 		float texCoordY = left.getTexCoordY() + texCoordYXStep * xPrestep;
 		float oneOverZ = left.getOneOverZ() + oneOverZXStep * xPrestep;
+		float depth = left.getDepth() + depthXStep * xPrestep;
 
 		for (int i = xMin; i < xMax; i++) {
-			float z = 1.0f / oneOverZ;
-			int srcX = (int) ((texCoordX * z) * (texture.getWidth() - 1) + 0.5f);
-			int srcY = (int) ((texCoordY * z) * (texture.getHeight() - 1) + 0.5f);
+			int index = i + j * getWidth();
+			if(depth < depthBuffer[index]) {
+				depthBuffer[index] = depth;
+				float z = 1.0f / oneOverZ;
+				int srcX = (int) ((texCoordX * z) * (texture.getWidth() - 1) + 0.5f);
+				int srcY = (int) ((texCoordY * z) * (texture.getHeight() - 1) + 0.5f);
 
-			copyPixel(i, j, srcX, srcY, texture);
+				copyPixel(i, j, srcX, srcY, texture);
+			}
 
 			texCoordX += texCoordXXStep;
 			texCoordY += texCoordYXStep;
 			oneOverZ += oneOverZXStep;
+			depth += depthXStep;
 		}
 	}
 }
