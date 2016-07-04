@@ -1,4 +1,4 @@
-package com.jhjava.jdoom.engine;
+package com.jhjava.jdoom.engine.core;
 
 public class Vector4f {
 	private final float x;
@@ -11,6 +11,10 @@ public class Vector4f {
 		this.y = y;
 		this.z = z;
 		this.w = w;
+	}
+
+	public Vector4f(float x, float y, float z) {
+		this(x, y, z, 1.0f);
 	}
 
 	public float length() {
@@ -48,14 +52,13 @@ public class Vector4f {
 						axis.mul(this.dot(axis.mul(1 - cosAngle))))); //Rotation on local Y
 	}
 
-//	public Vector3f rotate(Quaternion rotation)
-//	{
-//		Quaternion conjugate = rotation.conjugate();
-//
-//		Quaternion w = rotation.mul(this).mul(conjugate);
-//
-//		return new Vector3f(w.getX(), w.getY(), w.getZ());
-//	}
+	public Vector4f rotate(Quaternion rotation) {
+		Quaternion conjugate = rotation.conjugate();
+
+		Quaternion w = rotation.mul(this).mul(conjugate);
+
+		return new Vector4f(w.getX(), w.getY(), w.getZ());
+	}
 
 	public Vector4f lerp(Vector4f dest, float lerpFactor) {
 		return dest.sub(this).mul(lerpFactor).add(this);

@@ -1,4 +1,6 @@
-package com.jhjava.jdoom.engine;
+package com.jhjava.jdoom.engine.render;
+
+import com.jhjava.jdoom.engine.core.Matrix4f;
 
 import java.util.ArrayList;
 
@@ -14,6 +16,44 @@ public class RenderContext extends Bitmap {
 		for (int i = 0; i < depthBuffer.length; i++) {
 			depthBuffer[i] = Float.MAX_VALUE;
 		}
+	}
+
+	public void drawTriangle(Vertex v1, Vertex v2, Vertex v3, Bitmap texture) {
+		if(v1.isInsideViewFrustum() && v2.isInsideViewFrustum() && v3.isInsideViewFrustum()) {
+			fillTriangle(v1, v2, v3, texture);
+			return;
+		}
+
+		ArrayList<Vertex> vertices = new ArrayList<>();
+		ArrayList<Vertex> auxillaryList = new ArrayList<>();
+
+		vertices.add(v1);
+		vertices.add(v2);
+		vertices.add(v3);
+
+		if(clipPolygonAxis(vertices, auxillaryList, 0) &&
+				clipPolygonAxis(vertices, auxillaryList, 1) &&
+				clipPolygonAxis(vertices, auxillaryList, 2)) {
+			Vertex initialVertex = vertices.get(0);
+
+			for (int i = 1; i < vertices.size() - 1; i++) {
+				fillTriangle(initialVertex, vertices.get(i), vertices.get(i + 1), texture);
+			}
+		}
+	}
+
+	private boolean clipPolygonAxis(ArrayList<Vertex> vertices, ArrayList<Vertex> auxillaryList, int componentIndex) {
+		clipPolygonComponent(vertices, componentIndex, 1.0f, auxillaryList);
+		vertices.clear();
+
+		if(auxillaryList.isEmpty()) {
+			return false;
+		}
+
+		clipPolygonComponent(auxillaryList, componentIndex, -1.0f, vertices);
+		auxillaryList.clear();
+
+		return !vertices.isEmpty();
 	}
 
 	private void clipPolygonComponent(ArrayList<Vertex> vertices, int componentIndex, float componentFactor, ArrayList<Vertex> result) {
@@ -43,16 +83,7 @@ public class RenderContext extends Bitmap {
 		}
 	}
 
-	public void drawMesh(Mesh mesh, Matrix4f transform, Bitmap texture) {
-		for (int i = 0; i < mesh.getNumIndices(); i += 3) {
-			fillTriangle(mesh.getVertex(mesh.getIndex(i)).transform(transform),
-					mesh.getVertex(mesh.getIndex(i + 1)).transform(transform),
-					mesh.getVertex(mesh.getIndex(i + 2)).transform(transform),
-					texture);
-		}
-	}
-
-	public void fillTriangle(Vertex v1, Vertex v2, Vertex v3, Bitmap texture) {
+	private void fillTriangle(Vertex v1, Vertex v2, Vertex v3, Bitmap texture) {
 		Matrix4f screenSpaceTransform = new Matrix4f().initScreenSpaceTransform(getWidth() / 2, getHeight() / 2);
 		Vertex minYVert = v1.transform(screenSpaceTransform).perspectiveDivide();
 		Vertex midYVert = v2.transform(screenSpaceTransform).perspectiveDivide();

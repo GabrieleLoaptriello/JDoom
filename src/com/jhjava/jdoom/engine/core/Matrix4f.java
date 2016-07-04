@@ -1,4 +1,4 @@
-package com.jhjava.jdoom.engine;
+package com.jhjava.jdoom.engine.core;
 
 public class Matrix4f {
 	private float[][] m;
@@ -16,8 +16,8 @@ public class Matrix4f {
 	}
 
 	public Matrix4f initScreenSpaceTransform(float halfWidth, float halfHeight) {
-		m[0][0] = halfWidth; m[0][1] = 0; m[0][2] = 0; m[0][3] = halfWidth;
-		m[1][0] = 0; m[1][1] = -halfHeight; m[1][2] = 0; m[1][3] = halfHeight;
+		m[0][0] = halfWidth; m[0][1] = 0; m[0][2] = 0; m[0][3] = halfWidth - 0.5f;
+		m[1][0] = 0; m[1][1] = -halfHeight; m[1][2] = 0; m[1][3] = halfHeight - 0.5f;
 		m[2][0] = 0; m[2][1] = 0; m[2][2] = 1; m[2][3] = 0;
 		m[3][0] = 0; m[3][1] = 0; m[3][2] = 0; m[3][3] = 1;
 		return this;
@@ -36,9 +36,9 @@ public class Matrix4f {
 		Matrix4f my = new Matrix4f();
 		Matrix4f mz = new Matrix4f();
 		
-		x = (float)Math.toRadians(x);
-		y = (float)Math.toRadians(y);
-		z = (float)Math.toRadians(z);
+//		x = (float)Math.toRadians(x);
+//		y = (float)Math.toRadians(y);
+//		z = (float)Math.toRadians(z);
 		
 		mx.m[0][0] = 1;	mx.m[0][1] = 0;					mx.m[0][2] = 0;				   	 mx.m[0][3] = 0;
 		mx.m[1][0] = 0;	mx.m[1][1] = (float)Math.cos(x);mx.m[1][2] = -(float)Math.sin(x);mx.m[1][3] = 0;

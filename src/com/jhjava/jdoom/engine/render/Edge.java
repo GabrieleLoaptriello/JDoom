@@ -1,4 +1,4 @@
-package com.jhjava.jdoom.engine;
+package com.jhjava.jdoom.engine.render;
 
 public class Edge {
 	private float x;

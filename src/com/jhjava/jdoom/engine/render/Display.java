@@ -1,4 +1,6 @@
-package com.jhjava.jdoom.engine;
+package com.jhjava.jdoom.engine.render;
+
+import com.jhjava.jdoom.engine.core.Input;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,6 +15,7 @@ public class Display extends Canvas {
 	private final byte[] displayComponents;
 	private final BufferStrategy bufferStrategy;
 	private final Graphics graphics;
+	private final Input input;
 
 	public Display(int width, int height, String title) {
 		Dimension size = new Dimension(width, height);
@@ -36,6 +39,15 @@ public class Display extends Canvas {
 		createBufferStrategy(1);
 		bufferStrategy = getBufferStrategy();
 		graphics = bufferStrategy.getDrawGraphics();
+
+		input = new Input();
+		addKeyListener(input);
+		addFocusListener(input);
+		addMouseListener(input);
+		addMouseMotionListener(input);
+
+		setFocusable(true);
+		requestFocus();
 	}
 
 	public void swapBuffers() {
@@ -46,5 +58,9 @@ public class Display extends Canvas {
 
 	public RenderContext getFrameBuffer() {
 		return frameBuffer;
+	}
+
+	public Input getInput() {
+		return input;
 	}
 }

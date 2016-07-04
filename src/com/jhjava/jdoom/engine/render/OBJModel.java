@@ -1,12 +1,12 @@
-package com.jhjava.jdoom.engine;
+package com.jhjava.jdoom.engine.render;
+
+import com.jhjava.jdoom.engine.core.Vector4f;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class OBJModel {
 	private class OBJIndex {

@@ -1,7 +1,8 @@
-package com.jhjava.jdoom.engine;
+package com.jhjava.jdoom.engine.render;
+
+import com.jhjava.jdoom.engine.core.Vector4f;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class IndexedModel {
 	private ArrayList<Vector4f> positions;

@@ -1,9 +1,7 @@
-package com.jhjava.jdoom.engine;
+package com.jhjava.jdoom.engine.render;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 
 public class Bitmap {

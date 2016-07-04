@@ -1,4 +1,7 @@
-package com.jhjava.jdoom.engine;
+package com.jhjava.jdoom.engine.render;
+
+import com.jhjava.jdoom.engine.core.Matrix4f;
+import com.jhjava.jdoom.engine.core.Vector4f;
 
 public class Vertex {
 	private Vector4f pos;
@@ -31,20 +34,10 @@ public class Vertex {
 				texCoords.lerp(other.getTexCoords(), lerpAmt));
 	}
 
-	public float getX() {
-		return pos.getX();
-	}
-
-	public float getY() {
-		return pos.getY();
-	}
-
-	public Vector4f getPos() {
-		return pos;
-	}
-
-	public Vector4f getTexCoords() {
-		return texCoords;
+	public boolean isInsideViewFrustum() {
+		return Math.abs(pos.getX()) <= Math.abs(pos.getW()) &&
+				Math.abs(pos.getY()) <= Math.abs(pos.getW()) &&
+				Math.abs(pos.getZ()) <= Math.abs(pos.getW());
 	}
 
 	public float get(int i) {
@@ -61,5 +54,21 @@ public class Vertex {
 				System.err.println("WARNING: Index for method get in Vertex is out of bounds");
 				return 0;
 		}
+	}
+
+	public float getX() {
+		return pos.getX();
+	}
+
+	public float getY() {
+		return pos.getY();
+	}
+
+	public Vector4f getPos() {
+		return pos;
+	}
+
+	public Vector4f getTexCoords() {
+		return texCoords;
 	}
 }
