@@ -3,23 +3,29 @@ package com.jhjava.jdoom.engine;
 public class Gradients {
 	private float[] texCoordX;
 	private float[] texCoordY;
+	private float[] oneOverZ;
 
 	private float texCoordXXStep;
 	private float texCoordXYStep;
 	private float texCoordYXStep;
 	private float texCoordYYStep;
+	private float oneOverZXStep;
+	private float oneOverZYStep;
 
 	public Gradients(Vertex minYVert, Vertex midYVert, Vertex maxYVert) {
 		texCoordX = new float[3];
 		texCoordY = new float[3];
+		oneOverZ = new float[3];
 
-		texCoordX[0] = minYVert.getTexCoords().getX();
-		texCoordX[1] = midYVert.getTexCoords().getX();
-		texCoordX[2] = maxYVert.getTexCoords().getX();
-
-		texCoordY[0] = minYVert.getTexCoords().getY();
-		texCoordY[1] = midYVert.getTexCoords().getY();
-		texCoordY[2] = maxYVert.getTexCoords().getY();
+		oneOverZ[0] = 1.0f / minYVert.getPos().getW();
+		oneOverZ[1] = 1.0f / midYVert.getPos().getW();
+		oneOverZ[2] = 1.0f / maxYVert.getPos().getW();
+		texCoordX[0] = minYVert.getTexCoords().getX() * oneOverZ[0];
+		texCoordX[1] = midYVert.getTexCoords().getX() * oneOverZ[1];
+		texCoordX[2] = maxYVert.getTexCoords().getX() * oneOverZ[2];
+		texCoordY[0] = minYVert.getTexCoords().getY() * oneOverZ[0];
+		texCoordY[1] = midYVert.getTexCoords().getY() * oneOverZ[1];
+		texCoordY[2] = maxYVert.getTexCoords().getY() * oneOverZ[2];
 
 		float oneOverDX = 1.0f /
 				(((midYVert.getX() - maxYVert.getX()) *
@@ -28,28 +34,25 @@ public class Gradients {
 				(midYVert.getY() - maxYVert.getY())));
 		float oneOverDY = -oneOverDX;
 
-		texCoordXXStep =
-				(((texCoordX[1] - texCoordX[2]) *
+		texCoordXXStep = calcXStep(texCoordX, minYVert, midYVert, maxYVert, oneOverDX);
+		texCoordXYStep = calcYStep(texCoordX, minYVert, midYVert, maxYVert, oneOverDY);
+		texCoordYXStep = calcXStep(texCoordY, minYVert, midYVert, maxYVert, oneOverDX);
+		texCoordYYStep = calcYStep(texCoordY, minYVert, midYVert, maxYVert, oneOverDY);
+		oneOverZXStep = calcXStep(oneOverZ, minYVert, midYVert, maxYVert, oneOverDX);
+		oneOverZYStep = calcYStep(oneOverZ, minYVert, midYVert, maxYVert, oneOverDY);
+	}
+
+	private float calcXStep(float[] values, Vertex minYVert, Vertex midYVert, Vertex maxYVert, float oneOverDX) {
+		return (((values[1] - values[2]) *
 				(minYVert.getY() - maxYVert.getY())) -
-				((texCoordX[0] - texCoordX[2]) *
+				((values[0] - values[2]) *
 				(midYVert.getY() - maxYVert.getY()))) * oneOverDX;
+	}
 
-		texCoordXYStep =
-				(((texCoordX[1] - texCoordX[2]) *
+	private float calcYStep(float[] values, Vertex minYVert, Vertex midYVert, Vertex maxYVert, float oneOverDY) {
+		return (((values[1] - values[2]) *
 				(minYVert.getX() - maxYVert.getX())) -
-				((texCoordX[0] - texCoordX[2]) *
-				(midYVert.getX() - maxYVert.getX()))) * oneOverDY;
-
-		texCoordYXStep =
-				(((texCoordY[1] - texCoordY[2]) *
-				(minYVert.getY() - maxYVert.getY())) -
-				((texCoordY[0] - texCoordY[2]) *
-				(midYVert.getY() - maxYVert.getY()))) * oneOverDX;
-
-		texCoordYYStep =
-				(((texCoordY[1] - texCoordY[2]) *
-				(minYVert.getX() - maxYVert.getX())) -
-				((texCoordY[0] - texCoordY[2]) *
+				((values[0] - values[2]) *
 				(midYVert.getX() - maxYVert.getX()))) * oneOverDY;
 	}
 
@@ -75,5 +78,17 @@ public class Gradients {
 
 	public float getTexCoordYYStep() {
 		return texCoordYYStep;
+	}
+
+	public float getOneOverZ(int i) {
+		return oneOverZ[i];
+	}
+
+	public float getOneOverZXStep() {
+		return oneOverZXStep;
+	}
+
+	public float getOneOverZYStep() {
+		return oneOverZYStep;
 	}
 }

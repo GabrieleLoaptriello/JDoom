@@ -10,6 +10,8 @@ public class Edge {
 	private float texCoordXStep;
 	private float texCoordY;
 	private float texCoordYStep;
+	private float oneOverZ;
+	private float oneOverZStep;
 
 	public Edge(Gradients gradients, Vertex start, Vertex end, int minYVertIndex) {
 		yStart = (int) Math.ceil(start.getY());
@@ -32,12 +34,18 @@ public class Edge {
 				gradients.getTexCoordYXStep() * xPrestep +
 				gradients.getTexCoordYYStep() * yPrestep;
 		texCoordYStep = gradients.getTexCoordYYStep() + gradients.getTexCoordYXStep() * xStep;
+
+		oneOverZ = gradients.getOneOverZ(minYVertIndex) +
+				gradients.getOneOverZXStep() * xPrestep +
+				gradients.getOneOverZYStep() * yPrestep;
+		oneOverZStep = gradients.getOneOverZYStep() + gradients.getOneOverZXStep() * xStep;
 	}
 
 	public void step() {
 		x += xStep;
 		texCoordX += texCoordXStep;
 		texCoordY += texCoordYStep;
+		oneOverZ += oneOverZStep;
 	}
 
 	public int getYEnd() {
@@ -58,5 +66,9 @@ public class Edge {
 
 	public float getTexCoordY() {
 		return texCoordY;
+	}
+
+	public float getOneOverZ() {
+		return oneOverZ;
 	}
 }
