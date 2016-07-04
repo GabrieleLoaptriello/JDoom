@@ -64,13 +64,13 @@ public class Bitmap {
 		components[index + 3] = r;
 	}
 
-	public void copyPixel(int destX, int destY, int srcX, int srcY, Bitmap src) {
+	public void copyPixel(int destX, int destY, int srcX, int srcY, Bitmap src, float lightAmt) {
 		int destIndex = (destX + destY * width) * 4;
 		int srcIndex = (srcX + srcY * src.getWidth()) * 4;
-		components[destIndex] = src.getComponent(srcIndex);
-		components[destIndex + 1] = src.getComponent(srcIndex + 1);
-		components[destIndex + 2] = src.getComponent(srcIndex + 2);
-		components[destIndex + 3] = src.getComponent(srcIndex + 3);
+		components[destIndex] = (byte) ((src.getComponent(srcIndex) & 0xff) * lightAmt);
+		components[destIndex + 1] = (byte) ((src.getComponent(srcIndex + 1) & 0xff) * lightAmt);
+		components[destIndex + 2] = (byte) ((src.getComponent(srcIndex + 2) & 0xff) * lightAmt);
+		components[destIndex + 3] = (byte) ((src.getComponent(srcIndex + 3) & 0xff) * lightAmt);
 	}
 
 	public void copyToByteArray(byte[] dest) {

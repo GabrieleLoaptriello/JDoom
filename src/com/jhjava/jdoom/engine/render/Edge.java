@@ -14,6 +14,8 @@ public class Edge {
 	private float oneOverZStep;
 	private float depth;
 	private float depthStep;
+	private float lightAmt;
+	private float lightAmtStep;
 
 	public Edge(Gradients gradients, Vertex start, Vertex end, int minYVertIndex) {
 		yStart = (int) Math.ceil(start.getY());
@@ -46,6 +48,11 @@ public class Edge {
 				gradients.getDepthXStep() * xPrestep +
 				gradients.getDepthYStep() * yPrestep;
 		depthStep = gradients.getDepthYStep() + gradients.getDepthXStep() * xStep;
+
+		lightAmt = gradients.getLightAmt(minYVertIndex) +
+				gradients.getLightAmtXStep() * xPrestep +
+				gradients.getLightAmtYStep() * yPrestep;
+		lightAmtStep = gradients.getLightAmtYStep() + gradients.getLightAmtXStep() * xStep;
 	}
 
 	public void step() {
@@ -54,6 +61,7 @@ public class Edge {
 		texCoordY += texCoordYStep;
 		oneOverZ += oneOverZStep;
 		depth += depthStep;
+		lightAmt += lightAmtStep;
 	}
 
 	public int getYEnd() {
@@ -82,5 +90,9 @@ public class Edge {
 
 	public float getDepth() {
 		return depth;
+	}
+
+	public float getLightAmt() {
+		return lightAmt;
 	}
 }

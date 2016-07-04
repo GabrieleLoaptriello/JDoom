@@ -41,8 +41,8 @@ public class Main {
 			target.clear((byte) 0x00);
 			target.clearDepthBuffer();
 
-			monkeyMesh.draw(target, vp.mul(monkeyTransform.getTransformation()), texture2);
-			terrainMesh.draw(target, vp.mul(terrainTransform.getTransformation()), texture);
+			monkeyMesh.draw(target, vp, monkeyTransform.getTransformation(), texture2);
+			terrainMesh.draw(target, vp, terrainTransform.getTransformation(), texture);
 
 			display.swapBuffers();
 		}

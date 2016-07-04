@@ -6,18 +6,20 @@ import com.jhjava.jdoom.engine.core.Vector4f;
 public class Vertex {
 	private Vector4f pos;
 	private Vector4f texCoords;
+	private Vector4f normal;
 
-	public Vertex(Vector4f pos, Vector4f texCoords) {
+	public Vertex(Vector4f pos, Vector4f texCoords, Vector4f normal) {
 		this.pos = pos;
 		this.texCoords = texCoords;
+		this.normal = normal;
 	}
 
-	public Vertex transform(Matrix4f transform) {
-		return new Vertex(transform.transform(pos), texCoords);
+	public Vertex transform(Matrix4f transform, Matrix4f normalTransform) {
+		return new Vertex(transform.transform(pos), texCoords, normalTransform.transform(normal));
 	}
 
 	public Vertex perspectiveDivide() {
-		return new Vertex(new Vector4f(pos.getX() / pos.getW(), pos.getY() / pos.getW(), pos.getZ() / pos.getW(), pos.getW()), texCoords);
+		return new Vertex(new Vector4f(pos.getX() / pos.getW(), pos.getY() / pos.getW(), pos.getZ() / pos.getW(), pos.getW()), texCoords, normal);
 	}
 
 	public float triangleAreaTimesTwo(Vertex b, Vertex c) {
@@ -31,7 +33,8 @@ public class Vertex {
 
 	public Vertex lerp(Vertex other, float lerpAmt) {
 		return new Vertex(pos.lerp(other.getPos(), lerpAmt),
-				texCoords.lerp(other.getTexCoords(), lerpAmt));
+				texCoords.lerp(other.getTexCoords(), lerpAmt),
+				normal.lerp(other.getNormal(), lerpAmt));
 	}
 
 	public boolean isInsideViewFrustum() {
@@ -70,5 +73,9 @@ public class Vertex {
 
 	public Vector4f getTexCoords() {
 		return texCoords;
+	}
+
+	public Vector4f getNormal() {
+		return normal;
 	}
 }

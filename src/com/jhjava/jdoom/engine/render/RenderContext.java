@@ -85,9 +85,10 @@ public class RenderContext extends Bitmap {
 
 	private void fillTriangle(Vertex v1, Vertex v2, Vertex v3, Bitmap texture) {
 		Matrix4f screenSpaceTransform = new Matrix4f().initScreenSpaceTransform(getWidth() / 2, getHeight() / 2);
-		Vertex minYVert = v1.transform(screenSpaceTransform).perspectiveDivide();
-		Vertex midYVert = v2.transform(screenSpaceTransform).perspectiveDivide();
-		Vertex maxYVert = v3.transform(screenSpaceTransform).perspectiveDivide();
+		Matrix4f identity = new Matrix4f().initIdentity();
+		Vertex minYVert = v1.transform(screenSpaceTransform, identity).perspectiveDivide();
+		Vertex midYVert = v2.transform(screenSpaceTransform, identity).perspectiveDivide();
+		Vertex maxYVert = v3.transform(screenSpaceTransform, identity).perspectiveDivide();
 
 		if(minYVert.triangleAreaTimesTwo(maxYVert, midYVert) >= 0) {
 			return;
@@ -145,18 +146,19 @@ public class RenderContext extends Bitmap {
 		int xMin = (int) Math.ceil(left.getX());
 		int xMax = (int) Math.ceil(right.getX());
 		float xPrestep = xMin - left.getX();
-
 		float xDist = right.getX() - left.getX();
 
 		float texCoordXXStep = (right.getTexCoordX() - left.getTexCoordX()) / xDist;
 		float texCoordYXStep = (right.getTexCoordY() - left.getTexCoordY()) / xDist;
 		float oneOverZXStep = (right.getOneOverZ() - left.getOneOverZ()) / xDist;
 		float depthXStep = (right.getDepth() - left.getDepth()) / xDist;
+		float lightAmtXStep = (right.getLightAmt() - left.getLightAmt()) / xDist;
 
 		float texCoordX = left.getTexCoordX() + texCoordXXStep * xPrestep;
 		float texCoordY = left.getTexCoordY() + texCoordYXStep * xPrestep;
 		float oneOverZ = left.getOneOverZ() + oneOverZXStep * xPrestep;
 		float depth = left.getDepth() + depthXStep * xPrestep;
+		float lightAmt = left.getLightAmt() + lightAmtXStep * xPrestep;
 
 		for (int i = xMin; i < xMax; i++) {
 			int index = i + j * getWidth();
@@ -166,13 +168,14 @@ public class RenderContext extends Bitmap {
 				int srcX = (int) ((texCoordX * z) * (texture.getWidth() - 1) + 0.5f);
 				int srcY = (int) ((texCoordY * z) * (texture.getHeight() - 1) + 0.5f);
 
-				copyPixel(i, j, srcX, srcY, texture);
+				copyPixel(i, j, srcX, srcY, texture, lightAmt);
 			}
 
 			texCoordX += texCoordXXStep;
 			texCoordY += texCoordYXStep;
 			oneOverZ += oneOverZXStep;
 			depth += depthXStep;
+			lightAmt += lightAmtXStep;
 		}
 	}
 }

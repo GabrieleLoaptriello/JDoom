@@ -195,7 +195,7 @@ public class OBJModel {
 		}
 
 		if(!hasNormals) {
-			normalModel.CalcNormals();
+			normalModel.calcNormals();
 
 			for(int i = 0; i < result.getPositions().size(); i++) {
 				result.getNormals().add(normalModel.getNormals().get(indexMap.get(i)));
