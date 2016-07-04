@@ -6,7 +6,12 @@ public class Edge {
 	private int yStart;
 	private int yEnd;
 
-	public Edge(Vertex start, Vertex end) {
+	private float texCoordX;
+	private float texCoordXStep;
+	private float texCoordY;
+	private float texCoordYStep;
+
+	public Edge(Gradients gradients, Vertex start, Vertex end, int minYVertIndex) {
 		yStart = (int) Math.ceil(start.getY());
 		yEnd = (int) Math.ceil(end.getY());
 
@@ -16,10 +21,23 @@ public class Edge {
 		float yPrestep = yStart - start.getY();
 		xStep = xDist / yDist;
 		x = start.getX() + yPrestep * xStep;
+		float xPrestep = x - start.getX();
+
+		texCoordX = gradients.getTexCoordX(minYVertIndex) +
+				gradients.getTexCoordXXStep() * xPrestep +
+				gradients.getTexCoordXYStep() * yPrestep;
+		texCoordXStep = gradients.getTexCoordXYStep() + gradients.getTexCoordXXStep() * xStep;
+
+		texCoordY = gradients.getTexCoordY(minYVertIndex) +
+				gradients.getTexCoordYXStep() * xPrestep +
+				gradients.getTexCoordYYStep() * yPrestep;
+		texCoordYStep = gradients.getTexCoordYYStep() + gradients.getTexCoordYXStep() * xStep;
 	}
 
 	public void step() {
 		x += xStep;
+		texCoordX += texCoordXStep;
+		texCoordY += texCoordYStep;
 	}
 
 	public int getYEnd() {
@@ -32,5 +50,13 @@ public class Edge {
 
 	public float getX() {
 		return x;
+	}
+
+	public float getTexCoordX() {
+		return texCoordX;
+	}
+
+	public float getTexCoordY() {
+		return texCoordY;
 	}
 }

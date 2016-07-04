@@ -5,7 +5,7 @@ public class RenderContext extends Bitmap {
 		super(width, height);
 	}
 
-	public void fillTriangle(Vertex v1, Vertex v2, Vertex v3) {
+	public void fillTriangle(Vertex v1, Vertex v2, Vertex v3, Bitmap texture) {
 		Matrix4f screenSpaceTransform = new Matrix4f().initScreenSpaceTransform(getWidth() / 2, getHeight() / 2);
 		Vertex minYVert = v1.transform(screenSpaceTransform).perspectiveDivide();
 		Vertex midYVert = v2.transform(screenSpaceTransform).perspectiveDivide();
@@ -27,19 +27,21 @@ public class RenderContext extends Bitmap {
 			midYVert = temp;
 		}
 
-		scanTriangle(minYVert, midYVert, maxYVert, minYVert.triangleAreaTimesTwo(maxYVert, midYVert) >= 0);
+		scanTriangle(minYVert, midYVert, maxYVert, minYVert.triangleAreaTimesTwo(maxYVert, midYVert) >= 0, texture);
 	}
 
-	public void scanTriangle(Vertex minYVert, Vertex midYVert, Vertex maxYVert, boolean handedness) {
-		Edge topToBottom = new Edge(minYVert, maxYVert);
-		Edge topToMiddle = new Edge(minYVert, midYVert);
-		Edge middleToBottom = new Edge(midYVert, maxYVert);
+	public void scanTriangle(Vertex minYVert, Vertex midYVert, Vertex maxYVert, boolean handedness, Bitmap texture) {
+		Gradients gradients = new Gradients(minYVert, midYVert, maxYVert);
 
-		scanEdges(topToBottom, topToMiddle, handedness);
-		scanEdges(topToBottom, middleToBottom, handedness);
+		Edge topToBottom = new Edge(gradients, minYVert, maxYVert, 0);
+		Edge topToMiddle = new Edge(gradients, minYVert, midYVert, 0);
+		Edge middleToBottom = new Edge(gradients, midYVert, maxYVert, 1);
+
+		scanEdges(gradients, topToBottom, topToMiddle, handedness, texture);
+		scanEdges(gradients, topToBottom, middleToBottom, handedness, texture);
 	}
 
-	private void scanEdges(Edge a, Edge b, boolean handedness) {
+	private void scanEdges(Gradients gradients, Edge a, Edge b, boolean handedness, Bitmap texture) {
 		Edge left = a;
 		Edge right = b;
 		if(handedness) {
@@ -51,18 +53,32 @@ public class RenderContext extends Bitmap {
 		int yStart = b.getYStart();
 		int yEnd = b.getYEnd();
 		for (int j = yStart; j < yEnd; j++) {
-			drawScanLine(left, right, j);
+			drawScanLine(gradients, left, right, j, texture);
 			left.step();
 			right.step();
 		}
 	}
 
-	private void drawScanLine(Edge left, Edge right, int j) {
+	private void drawScanLine(Gradients gradients, Edge left, Edge right, int j, Bitmap texture) {
 		int xMin = (int) Math.ceil(left.getX());
 		int xMax = (int) Math.ceil(right.getX());
+		float xPrestep = xMin - left.getX();
+
+		float xDist = right.getX() - left.getX();
+		float texCoordXXStep = (right.getTexCoordX() - left.getTexCoordX()) / xDist;
+		float texCoordYXStep = (right.getTexCoordY() - left.getTexCoordY()) / xDist;
+
+		float texCoordX = left.getTexCoordX() + gradients.getTexCoordXXStep() * xPrestep;
+		float texCoordY = left.getTexCoordY() + gradients.getTexCoordYXStep() * xPrestep;
 
 		for (int i = xMin; i < xMax; i++) {
-			drawPixel(i, j, (byte)0xff, (byte)0xff, (byte)0xff, (byte)0xff);
+			int srcX = (int) (texCoordX * (texture.getWidth() - 1) + 0.5f);
+			int srcY = (int) (texCoordY * (texture.getHeight() - 1) + 0.5f);
+
+			copyPixel(i, j, srcX, srcY, texture);
+
+			texCoordX += texCoordXXStep;
+			texCoordY += texCoordYXStep;
 		}
 	}
 }

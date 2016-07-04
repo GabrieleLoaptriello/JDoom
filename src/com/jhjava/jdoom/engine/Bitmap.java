@@ -18,11 +18,20 @@ public class Bitmap {
 	}
 	
 	public void drawPixel(int x, int y, byte a, byte b, byte g, byte r) {
-		int index = (y * width + x) * 4;
+		int index = (x + y * width) * 4;
 		components[index] = a;
 		components[index + 1] = b;
 		components[index + 2] = g;
 		components[index + 3] = r;
+	}
+
+	public void copyPixel(int destX, int destY, int srcX, int srcY, Bitmap src) {
+		int destIndex = (destX + destY * width) * 4;
+		int srcIndex = (srcX + srcY * src.getWidth()) * 4;
+		components[destIndex] = src.getComponent(srcIndex);
+		components[destIndex + 1] = src.getComponent(srcIndex + 1);
+		components[destIndex + 2] = src.getComponent(srcIndex + 2);
+		components[destIndex + 3] = src.getComponent(srcIndex + 3);
 	}
 
 	public void copyToByteArray(byte[] dest) {
@@ -39,5 +48,9 @@ public class Bitmap {
 
 	public int getHeight() {
 		return height;
+	}
+
+	public byte getComponent(int i) {
+		return components[i];
 	}
 }

@@ -2,25 +2,19 @@ package com.jhjava.jdoom.engine;
 
 public class Vertex {
 	private Vector4f pos;
+	private Vector4f texCoords;
 
-	public Vertex(float x, float y, float z) {
-		pos = new Vector4f(x, y, z, 1);
-	}
-
-	public Vertex(float x, float y) {
-		this(x, y, 1);
-	}
-
-	public Vertex(Vector4f pos) {
+	public Vertex(Vector4f pos, Vector4f texCoords) {
 		this.pos = pos;
+		this.texCoords = texCoords;
 	}
 
 	public Vertex transform(Matrix4f transform) {
-		return new Vertex(transform.transform(pos));
+		return new Vertex(transform.transform(pos), texCoords);
 	}
 
 	public Vertex perspectiveDivide() {
-		return new Vertex(new Vector4f(pos.getX() / pos.getW(), pos.getY() / pos.getW(), pos.getZ() / pos.getW(), pos.getW()));
+		return new Vertex(new Vector4f(pos.getX() / pos.getW(), pos.getY() / pos.getW(), pos.getZ() / pos.getW(), pos.getW()), texCoords);
 	}
 
 	public float triangleAreaTimesTwo(Vertex b, Vertex c) {
@@ -38,5 +32,13 @@ public class Vertex {
 
 	public float getY() {
 		return pos.getY();
+	}
+
+	public Vector4f getPos() {
+		return pos;
+	}
+
+	public Vector4f getTexCoords() {
+		return texCoords;
 	}
 }
