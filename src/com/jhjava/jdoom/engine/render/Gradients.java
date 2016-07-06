@@ -1,5 +1,6 @@
 package com.jhjava.jdoom.engine.render;
 
+import com.jhjava.jdoom.engine.components.Light;
 import com.jhjava.jdoom.engine.core.Vector4f;
 
 public class Gradients {
@@ -20,7 +21,7 @@ public class Gradients {
 	private float lightAmtXStep;
 	private float lightAmtYStep;
 
-	public Gradients(Vertex minYVert, Vertex midYVert, Vertex maxYVert) {
+	public Gradients(Vertex minYVert, Vertex midYVert, Vertex maxYVert, Light light) {
 		texCoordX = new float[3];
 		texCoordY = new float[3];
 		oneOverZ = new float[3];
@@ -39,11 +40,9 @@ public class Gradients {
 		depth[0] = minYVert.getPos().getZ();
 		depth[1] = midYVert.getPos().getZ();
 		depth[2] = maxYVert.getPos().getZ();
-
-		Vector4f lightDir = new Vector4f(0, 0, 1);
-		lightAmt[0] = saturate(minYVert.getNormal().dot(lightDir)) + 0.2f;
-		lightAmt[1] = saturate(midYVert.getNormal().dot(lightDir)) + 0.2f;
-		lightAmt[2] = saturate(maxYVert.getNormal().dot(lightDir)) + 0.2f;
+		lightAmt[0] = saturate(minYVert.getNormal().dot(light.getDirection().normalized())) * light.getIntensity() + light.getAmbient();
+		lightAmt[1] = saturate(midYVert.getNormal().dot(light.getDirection().normalized())) * light.getIntensity() + light.getAmbient();
+		lightAmt[2] = saturate(maxYVert.getNormal().dot(light.getDirection().normalized())) * light.getIntensity() + light.getAmbient();
 
 		float oneOverDX = 1.0f /
 				(((midYVert.getX() - maxYVert.getX()) *

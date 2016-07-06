@@ -1,5 +1,6 @@
 package com.jhjava.jdoom.engine.render;
 
+import com.jhjava.jdoom.engine.components.Light;
 import com.jhjava.jdoom.engine.core.Matrix4f;
 
 import java.util.ArrayList;
@@ -18,9 +19,9 @@ public class RenderContext extends Bitmap {
 		}
 	}
 
-	public void drawTriangle(Vertex v1, Vertex v2, Vertex v3, Bitmap texture) {
+	public void drawTriangle(Vertex v1, Vertex v2, Vertex v3, Bitmap texture, Light light) {
 		if(v1.isInsideViewFrustum() && v2.isInsideViewFrustum() && v3.isInsideViewFrustum()) {
-			fillTriangle(v1, v2, v3, texture);
+			fillTriangle(v1, v2, v3, texture, light);
 			return;
 		}
 
@@ -37,7 +38,7 @@ public class RenderContext extends Bitmap {
 			Vertex initialVertex = vertices.get(0);
 
 			for (int i = 1; i < vertices.size() - 1; i++) {
-				fillTriangle(initialVertex, vertices.get(i), vertices.get(i + 1), texture);
+				fillTriangle(initialVertex, vertices.get(i), vertices.get(i + 1), texture, light);
 			}
 		}
 	}
@@ -83,7 +84,7 @@ public class RenderContext extends Bitmap {
 		}
 	}
 
-	private void fillTriangle(Vertex v1, Vertex v2, Vertex v3, Bitmap texture) {
+	private void fillTriangle(Vertex v1, Vertex v2, Vertex v3, Bitmap texture, Light light) {
 		Matrix4f screenSpaceTransform = new Matrix4f().initScreenSpaceTransform(getWidth() / 2, getHeight() / 2);
 		Matrix4f identity = new Matrix4f().initIdentity();
 		Vertex minYVert = v1.transform(screenSpaceTransform, identity).perspectiveDivide();
@@ -110,11 +111,11 @@ public class RenderContext extends Bitmap {
 			midYVert = temp;
 		}
 
-		scanTriangle(minYVert, midYVert, maxYVert, minYVert.triangleAreaTimesTwo(maxYVert, midYVert) >= 0, texture);
+		scanTriangle(minYVert, midYVert, maxYVert, minYVert.triangleAreaTimesTwo(maxYVert, midYVert) >= 0, texture, light);
 	}
 
-	public void scanTriangle(Vertex minYVert, Vertex midYVert, Vertex maxYVert, boolean handedness, Bitmap texture) {
-		Gradients gradients = new Gradients(minYVert, midYVert, maxYVert);
+	public void scanTriangle(Vertex minYVert, Vertex midYVert, Vertex maxYVert, boolean handedness, Bitmap texture, Light light) {
+		Gradients gradients = new Gradients(minYVert, midYVert, maxYVert, light);
 
 		Edge topToBottom = new Edge(gradients, minYVert, maxYVert, 0);
 		Edge topToMiddle = new Edge(gradients, minYVert, midYVert, 0);

@@ -1,4 +1,4 @@
-package com.jhjava.jdoom.engine;
+package com.jhjava.jdoom.engine.components;
 
 import com.jhjava.jdoom.engine.core.*;
 

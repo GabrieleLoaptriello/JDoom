@@ -1,5 +1,6 @@
 package com.jhjava.jdoom.engine.render;
 
+import com.jhjava.jdoom.engine.components.Light;
 import com.jhjava.jdoom.engine.core.Matrix4f;
 
 import java.util.ArrayList;
@@ -19,13 +20,13 @@ public class Mesh {
 		indices = model.getIndices();
 	}
 
-	public void draw(RenderContext r, Matrix4f viewProjection, Matrix4f transform, Bitmap texture) {
+	public void draw(RenderContext r, Matrix4f viewProjection, Matrix4f transform, Bitmap texture, Light light) {
 		Matrix4f mvp = viewProjection.mul(transform);
 		for (int i = 0; i < indices.size(); i += 3) {
 			r.drawTriangle(vertices.get(indices.get(i)).transform(mvp, transform),
 					vertices.get(indices.get(i + 1)).transform(mvp, transform),
 					vertices.get(indices.get(i + 2)).transform(mvp, transform),
-					texture);
+					texture, light);
 		}
 	}
 
