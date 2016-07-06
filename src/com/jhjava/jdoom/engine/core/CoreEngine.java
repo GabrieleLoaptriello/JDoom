@@ -13,14 +13,18 @@ public class CoreEngine {
 
 	private boolean running = false;
 
-	public CoreEngine(int width, int height, String title, Scene scene) {
+	public CoreEngine(int width, int height, String title) {
 		renderEngine = new RenderEngine(width, height, title);
-		this.scene = scene;
 	}
 
 	public void start() {
 		if(!running) {
+			if(scene == null) {
+				System.err.println("ERROR: No scene in CoreEngine");
+				System.exit(1);
+			}
 			running = true;
+			scene.init();
 			run();
 		}
 	}
@@ -32,12 +36,12 @@ public class CoreEngine {
 			float delta = (float) ((currentTime - previousTime)/1000000000.0);
 			previousTime = currentTime;
 
-			renderEngine.updateCamera(delta);
+			scene.update(delta, renderEngine.getDisplay().getInput());
 
 			renderEngine.clear(true, true);
 
 			for (int i = 0; i < scene.getEntities().size(); i++) {
-				renderEngine.render(scene.getEntities().get(i), scene.getLight());
+				renderEngine.render(scene.getEntities().get(i), scene.getLight(), scene.getCamera());
 			}
 
 			renderEngine.swapBuffers();
@@ -48,5 +52,13 @@ public class CoreEngine {
 		if(running) {
 			running = false;
 		}
+	}
+
+	public RenderEngine getRenderEngine() {
+		return renderEngine;
+	}
+
+	public void setScene(Scene scene) {
+		this.scene = scene;
 	}
 }

@@ -6,8 +6,13 @@ import com.jhjava.jdoom.engine.core.Matrix4f;
 import java.util.ArrayList;
 
 public class Mesh {
-	private ArrayList<Vertex> vertices;
-	private ArrayList<Integer> indices;
+	protected ArrayList<Vertex> vertices;
+	protected ArrayList<Integer> indices;
+
+	public Mesh() {
+		vertices = new ArrayList<>();
+		indices = new ArrayList<>();
+	}
 
 	public Mesh(String name) {
 		IndexedModel model = new OBJModel(name).toIndexedModel();

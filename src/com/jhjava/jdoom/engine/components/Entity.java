@@ -16,6 +16,10 @@ public class Entity {
 		this.transform = transform;
 	}
 
+	public Entity() {
+		this(new Mesh(), new Bitmap(2, 2), new Transform());
+	}
+
 	public Mesh getMesh() {
 		return mesh;
 	}
@@ -30,5 +34,13 @@ public class Entity {
 
 	public void setTransform(Transform transform) {
 		this.transform = transform;
+	}
+
+	protected void setMesh(Mesh mesh) {
+		this.mesh = mesh;
+	}
+
+	protected void setTexture(Bitmap texture) {
+		this.texture = texture;
 	}
 }
