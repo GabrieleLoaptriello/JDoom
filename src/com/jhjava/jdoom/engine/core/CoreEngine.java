@@ -36,6 +36,7 @@ public class CoreEngine {
 			float delta = (float) ((currentTime - previousTime)/1000000000.0);
 			previousTime = currentTime;
 
+			renderEngine.getDisplay().getInput().update(delta);
 			scene.update(delta, renderEngine.getDisplay().getInput());
 
 			renderEngine.clear(true, true);

@@ -10,6 +10,8 @@ public class Camera {
 	private Transform transform;
 	private Matrix4f projection;
 
+	private float pitch = 0.0f;
+
 	public Camera(Matrix4f projection) {
 		this.projection = projection;
 		this.transform = new Transform();
@@ -25,31 +27,21 @@ public class Camera {
 	}
 
 	public void update(Input input, float delta) {
-		// Speed and rotation amounts are hardcoded here.
-		// In a more general system, you might want to have them as variables.
-		final float sensitivityX = 2.66f * delta;
-		final float sensitivityY = 2.0f * delta;
+		final float rotX = input.getMouseXDelta() * 4;
+		final float rotY = input.getMouseYDelta() * 3;
 		final float movAmt = 5.0f * delta;
 
-		// Similarly, input keys are hardcoded here.
-		// As before, in a more general system, you might want to have these as variables.
 		if(input.getKey(KeyEvent.VK_W))
-			move(getTransform().getRot().getForward(), movAmt);
+			move(new Vector4f(getTransform().getRot().getForward().getX(), 0, getTransform().getRot().getForward().getZ()), movAmt);
 		if(input.getKey(KeyEvent.VK_S))
-			move(getTransform().getRot().getForward(), -movAmt);
+			move(new Vector4f(getTransform().getRot().getForward().getX(), 0, getTransform().getRot().getForward().getZ()), -movAmt);
 		if(input.getKey(KeyEvent.VK_A))
-			move(getTransform().getRot().getLeft(), movAmt);
+			move(new Vector4f(getTransform().getRot().getLeft().getX(), 0, getTransform().getRot().getLeft().getZ()), movAmt);
 		if(input.getKey(KeyEvent.VK_D))
-			move(getTransform().getRot().getRight(), movAmt);
+			move(new Vector4f(getTransform().getRot().getRight().getX(), 0, getTransform().getRot().getRight().getZ()), movAmt);
 
-		if(input.getKey(KeyEvent.VK_RIGHT))
-			rotate(Y_AXIS, sensitivityX);
-		if(input.getKey(KeyEvent.VK_LEFT))
-			rotate(Y_AXIS, -sensitivityX);
-		if(input.getKey(KeyEvent.VK_DOWN))
-			rotate(getTransform().getRot().getRight(), sensitivityY);
-		if(input.getKey(KeyEvent.VK_UP))
-			rotate(getTransform().getRot().getRight(), -sensitivityY);
+		rotate(Y_AXIS, (float) Math.toRadians(rotX));
+		rotate(getTransform().getRot().getRight(), (float) Math.toRadians(rotY));
 	}
 
 	private void move(Vector4f dir, float amt) {
@@ -60,7 +52,11 @@ public class Camera {
 		transform = getTransform().rotate(new Quaternion(axis, angle));
 	}
 
-	private Transform getTransform() {
+	public Transform getTransform() {
 		return transform;
+	}
+
+	public void setTransform(Transform transform) {
+		this.transform = transform;
 	}
 }

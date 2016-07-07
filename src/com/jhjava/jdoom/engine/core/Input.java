@@ -14,6 +14,20 @@ public class Input implements KeyListener, FocusListener,
 	private boolean[] mouseButtons = new boolean[4];
 	private int mouseX = 0;
 	private int mouseY = 0;
+	private int prevMouseX = 0;
+	private int prevMouseY = 0;
+
+	private float mouseXDelta = 0;
+	private float mouseYDelta = 0;
+
+	public void update(float delta) {
+		mouseXDelta = (mouseX - prevMouseX) * delta;
+		mouseYDelta = (mouseY - prevMouseY) * delta;
+		prevMouseX = mouseX;
+		prevMouseY = mouseY;
+		System.out.print(mouseXDelta + ", ");
+		System.out.println(mouseYDelta);
+	}
 
 	public void mouseDragged(MouseEvent e) {
 		mouseX = e.getX();
@@ -85,5 +99,13 @@ public class Input implements KeyListener, FocusListener,
 
 	public int getMouseY() {
 		return mouseY;
+	}
+
+	public float getMouseXDelta() {
+		return mouseXDelta;
+	}
+
+	public float getMouseYDelta() {
+		return mouseYDelta;
 	}
 }

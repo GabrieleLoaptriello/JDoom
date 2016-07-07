@@ -23,7 +23,7 @@ public class JDoom extends Scene {
 	public void init() {
 		super.init();
 
-		monkey = new Entity(new Mesh("smoothMonkey0.obj"), new Bitmap("bricks2.jpg"), new Transform(new Vector4f(0.0f, 0.0f, 3.0f)));
+		monkey = new Entity(new Mesh("smoothMonkey0.obj"), new Bitmap("bricks2.jpg"), new Transform(new Vector4f(20, 0, 22), new Quaternion(new Vector4f(0, 0, 0), 0), new Vector4f(0.5f, 0.5f, 0.5f)));
 		addEntity(monkey);
 
 		map = new Map("map.png");
@@ -31,6 +31,8 @@ public class JDoom extends Scene {
 
 		light = new Light(new Vector4f(1, 0, 1), 0.8f, 0.2f);
 		setLight(light);
+
+		getCamera().setTransform(getCamera().getTransform().setPos(new Vector4f(2, 0, 2)));
 	}
 
 	@Override
