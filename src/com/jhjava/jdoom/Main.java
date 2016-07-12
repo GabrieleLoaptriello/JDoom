@@ -11,7 +11,7 @@ import com.jhjava.jdoom.engine.render.Mesh;
 
 public class Main {
 	public static void main(String[] args) {
-		CoreEngine coreEngine = new CoreEngine(800, 600, "JDoom");
+		CoreEngine coreEngine = new CoreEngine(1080, 720, "JDoom");
 		Scene scene = new JDoom(coreEngine);
 		coreEngine.setScene(scene);
 		coreEngine.start();

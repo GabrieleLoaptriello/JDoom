@@ -4,8 +4,7 @@ import com.jhjava.jdoom.engine.components.Entity;
 import com.jhjava.jdoom.engine.components.Light;
 import com.jhjava.jdoom.engine.components.Scene;
 import com.jhjava.jdoom.engine.core.*;
-import com.jhjava.jdoom.engine.map.Map;
-import com.jhjava.jdoom.engine.map.MapMesh;
+import com.jhjava.jdoom.map.Level;
 import com.jhjava.jdoom.engine.render.Bitmap;
 import com.jhjava.jdoom.engine.render.Mesh;
 
@@ -13,7 +12,8 @@ public class JDoom extends Scene {
 	Light light;
 
 	Entity monkey;
-	Entity map;
+
+	Level level;
 
 	public JDoom(CoreEngine engine) {
 		super(engine);
@@ -26,8 +26,8 @@ public class JDoom extends Scene {
 		monkey = new Entity(new Mesh("smoothMonkey0.obj"), new Bitmap("bricks2.jpg"), new Transform(new Vector4f(20, 0, 22), new Quaternion(new Vector4f(0, 0, 0), 0), new Vector4f(0.5f, 0.5f, 0.5f)));
 		addEntity(monkey);
 
-		map = new Map("map.png");
-		addEntity(map);
+		level = new Level("map.png", "textures.png");
+		addEntity(level);
 
 		light = new Light(new Vector4f(1, 0, 1), 0.8f, 0.2f);
 		setLight(light);

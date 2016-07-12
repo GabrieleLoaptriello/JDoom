@@ -6,12 +6,17 @@ import com.jhjava.jdoom.engine.core.Matrix4f;
 import java.util.ArrayList;
 
 public class Mesh {
-	protected ArrayList<Vertex> vertices;
-	protected ArrayList<Integer> indices;
+	private ArrayList<Vertex> vertices;
+	private ArrayList<Integer> indices;
 
 	public Mesh() {
 		vertices = new ArrayList<>();
 		indices = new ArrayList<>();
+	}
+
+	public Mesh(ArrayList<Vertex> vertices, ArrayList<Integer> indices) {
+		this.vertices = vertices;
+		this.indices = indices;
 	}
 
 	public Mesh(String name) {
@@ -45,5 +50,13 @@ public class Mesh {
 
 	public int getNumIndices() {
 		return indices.size();
+	}
+
+	public void setVertices(ArrayList<Vertex> vertices) {
+		this.vertices = vertices;
+	}
+
+	public void setIndices(ArrayList<Integer> indices) {
+		this.indices = indices;
 	}
 }

@@ -27,8 +27,8 @@ public class Camera {
 	}
 
 	public void update(Input input, float delta) {
-		final float rotX = input.getMouseXDelta() * 4;
-		final float rotY = input.getMouseYDelta() * 3;
+		final float rotX = input.getMouseXDelta() * 4 * delta;
+		final float rotY = input.getMouseYDelta() * 3 * delta;
 		final float movAmt = 5.0f * delta;
 
 		if(input.getKey(KeyEvent.VK_W))

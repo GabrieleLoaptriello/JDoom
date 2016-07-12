@@ -1,5 +1,6 @@
 package com.jhjava.jdoom.engine.components;
 
+import com.jhjava.jdoom.engine.core.Input;
 import com.jhjava.jdoom.engine.core.Transform;
 import com.jhjava.jdoom.engine.core.Vector4f;
 import com.jhjava.jdoom.engine.render.Bitmap;
@@ -18,6 +19,10 @@ public class Entity {
 
 	public Entity() {
 		this(new Mesh(), new Bitmap(2, 2), new Transform());
+	}
+
+	public void update(float delta, Input input) {
+
 	}
 
 	public Mesh getMesh() {

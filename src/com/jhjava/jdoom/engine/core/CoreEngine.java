@@ -36,7 +36,7 @@ public class CoreEngine {
 			float delta = (float) ((currentTime - previousTime)/1000000000.0);
 			previousTime = currentTime;
 
-			renderEngine.getDisplay().getInput().update(delta);
+			renderEngine.getDisplay().getInput().update();
 			scene.update(delta, renderEngine.getDisplay().getInput());
 
 			renderEngine.clear(true, true);
@@ -60,6 +60,8 @@ public class CoreEngine {
 	}
 
 	public void setScene(Scene scene) {
+		stop();
 		this.scene = scene;
+		start();
 	}
 }

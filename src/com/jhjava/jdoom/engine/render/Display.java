@@ -40,7 +40,7 @@ public class Display extends Canvas {
 		bufferStrategy = getBufferStrategy();
 		graphics = bufferStrategy.getDrawGraphics();
 
-		input = new Input();
+		input = new Input(frame);
 		addKeyListener(input);
 		addFocusListener(input);
 		addMouseListener(input);

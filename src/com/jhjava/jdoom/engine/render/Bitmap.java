@@ -37,12 +37,11 @@ public class Bitmap {
 		image.getRGB(0, 0, width, height, imgPixels, 0, width);
 		components = new byte[width * height * 4];
 
-		for(int i = 0; i < width * height; i++)
-		{
+		for(int i = 0; i < width * height; i++) {
 			int pixel = imgPixels[i];
 
-			components[i * 4]     = (byte)((pixel >> 24) & 0xFF); // A
-			components[i * 4 + 1] = (byte)((pixel      ) & 0xFF); // B
+			components[i * 4] = (byte)((pixel >> 24) & 0xFF); // A
+			components[i * 4 + 1] = (byte)((pixel) & 0xFF); // B
 			components[i * 4 + 2] = (byte)((pixel >> 8 ) & 0xFF); // G
 			components[i * 4 + 3] = (byte)((pixel >> 16) & 0xFF); // R
 		}
@@ -79,6 +78,32 @@ public class Bitmap {
 			dest[i * 3 + 1] = components[i * 4 + 2];
 			dest[i * 3 + 2] = components[i * 4 + 3];
 		}
+	}
+
+	public Bitmap flipX() {
+		Bitmap ret = new Bitmap(width, height);
+
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				int componentIndex = ((width - x - 1) + y * width) * 4;
+				ret.drawPixel(x, y, components[componentIndex], components[componentIndex + 1], components[componentIndex + 2], components[componentIndex + 3]);
+			}
+		}
+
+		return ret;
+	}
+
+	public Bitmap flipY() {
+		Bitmap ret = new Bitmap(width, height);
+
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				int componentIndex = (x + (height - y - 1) * width) * 4;
+				ret.drawPixel(x, y, components[componentIndex], components[componentIndex + 1], components[componentIndex + 2], components[componentIndex + 3]);
+			}
+		}
+
+		return ret;
 	}
 
 	public int getWidth() {
