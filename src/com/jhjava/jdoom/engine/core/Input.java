@@ -38,11 +38,19 @@ public class Input implements KeyListener, FocusListener,
 	}
 
 	public void update() {
-		if(!captureMouse) {
-			mouseXDelta = (mouseX - prevMouseX);
-			mouseYDelta = (mouseY - prevMouseY);
-			prevMouseX = mouseX;
-			prevMouseY = mouseY;
+		mouseXDelta = (mouseX - prevMouseX);
+		mouseYDelta = (mouseY - prevMouseY);
+		prevMouseX = mouseX;
+		prevMouseY = mouseY;
+		if(captureMouse) {
+			if(mouseCaptured) {
+				try {
+					Robot robot = new Robot();
+					robot.mouseMove(frame.getX() + frame.getWidth() / 2, frame.getY() + frame.getHeight() / 2);
+				} catch (AWTException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 
@@ -50,16 +58,6 @@ public class Input implements KeyListener, FocusListener,
 		if(mouseCaptured) {
 			mouseX = e.getX();
 			mouseY = e.getY();
-			if(captureMouse) {
-				try {
-					Robot robot = new Robot();
-					robot.mouseMove(frame.getX() + frame.getWidth() / 2, frame.getY() + frame.getHeight() / 2);
-				} catch (AWTException ex) {
-					ex.printStackTrace();
-				}
-				mouseXDelta = (mouseX - frame.getWidth() / 2);
-				mouseYDelta = (mouseY - frame.getHeight() / 2);
-			}
 		}
 	}
 
@@ -67,17 +65,6 @@ public class Input implements KeyListener, FocusListener,
 		if(mouseCaptured) {
 			mouseX = e.getX();
 			mouseY = e.getY();
-			if(captureMouse) {
-				try {
-					Robot robot = new Robot();
-					robot.mouseMove(frame.getX() + frame.getWidth() / 2, frame.getY() + frame.getHeight() / 2);
-				} catch (AWTException ex) {
-					ex.printStackTrace();
-				}
-				mouseXDelta = (mouseX - frame.getWidth() / 2);
-				mouseYDelta = (mouseY - frame.getHeight() / 2);
-				System.out.println(mouseY + ", " + frame.getHeight() / 2);
-			}
 		}
 	}
 
